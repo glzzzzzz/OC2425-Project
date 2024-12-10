@@ -12,7 +12,7 @@ class Game:
 
         self.clock = pygame.time.Clock()
 
-        self.tmx_maps = {0: load_pygame('./data/background/test_map.tmx')}
+        self.tmx_maps = {0: load_pygame('../data/background/test_map.tmx')}
         
 
         self.level = Level(self.tmx_maps[0])
