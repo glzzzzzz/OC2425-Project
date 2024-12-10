@@ -7,10 +7,42 @@ class Monster(Player):
         super().__init__(pos, groups, collision_sprites)
         self.image.fill('green')
 
+    def input(self):
+        keys = pygame.key.get_pressed()
+        input_vector = vector(0,0)
+        
+        if not self.timers['wall jump'].active:
+            if keys[pygame.K_RIGHT]:
+                input_vector.x += 1
+
+            if keys[pygame.K_LEFT]:
+                input_vector.x -= 1
+            #norme de 1
+            self.direction.x = input_vector.normalize().x if input_vector else input_vector.x
+
+        if keys[pygame.K_UP]:
+            self.jump = True
+
 class Zombie(Player):
     def __init__(self, pos, groups, collision_sprites):
         super().__init__(pos, groups, collision_sprites)
         self.image.fill('blue')
+
+    def input(self):
+        keys = pygame.key.get_pressed()
+        input_vector = vector(0,0)
+        
+        if not self.timers['wall jump'].active:
+            if keys[pygame.K_d]:
+                input_vector.x += 1
+
+            if keys[pygame.K_a]:
+                input_vector.x -= 1
+            #norme de 1
+            self.direction.x = input_vector.normalize().x if input_vector else input_vector.x
+
+        if keys[pygame.K_w]:
+            self.jump = True
 
 class Level:
     def __init__(self, tmx_map):
