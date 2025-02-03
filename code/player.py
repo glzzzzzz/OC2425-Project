@@ -27,21 +27,21 @@ class Player(pygame.sprite.Sprite):
         }
 
 
-   # def input(self):
-     #   keys = pygame.key.get_pressed()
-      #  input_vector = vector(0,0)
-#
- #       if not self.timers['wall jump'].active:
-  #          if keys[pygame.K_RIGHT]:
-   #             input_vector.x += 1
-#
- #           if keys[pygame.K_LEFT]:
-  #              input_vector.x -= 1
-   #         #norme de 1
-    #        self.direction.x = input_vector.normalize().x if input_vector else input_vector.x
-##
-  #      if keys[pygame.K_UP]:
-   #         self.jump = True
+    def input(self):
+        keys = pygame.key.get_pressed()
+        input_vector = vector(0,0)
+
+        if not self.timers['wall jump'].active:
+            if keys[pygame.K_RIGHT]:
+                input_vector.x += 1
+
+            if keys[pygame.K_LEFT]:
+                input_vector.x -= 1
+            #norme de 1
+            self.direction.x = input_vector.normalize().x if input_vector else input_vector.x
+
+        if keys[pygame.K_UP]:
+            self.jump = True
             
             
 

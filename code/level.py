@@ -62,9 +62,9 @@ class Level:
 
         for obj in tmx_map.get_layer_by_name('Object'): 
             if obj.name =='monster':
-                Monster((obj.x, obj.y-100), self.all_sprites, self.collision_sprites)
+                Player((obj.x, obj.y-100), self.all_sprites, self.collision_sprites)
             if obj.name == 'zombie':
-                Zombie((obj.x, obj.y-100), self.all_sprites, self.collision_sprites)
+                Player((obj.x, obj.y-100), self.all_sprites, self.collision_sprites)
 
             tmx_map.get_layer_by_name('Object')
     def run(self, dt):
