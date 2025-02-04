@@ -69,10 +69,10 @@ class Level:
             if obj.name == 'zombie':
                 player2 = Player((obj.x, obj.y-100), self.all_sprites, self.collision_sprites)
                 self.players.append(player2)
-
             tmx_map.get_layer_by_name('Object')
     def run(self, dt):
-        
+
+
         self.display_surface.fill('black')
         self.all_sprites.update(dt)
         self.all_sprites.draw(self.display_surface)

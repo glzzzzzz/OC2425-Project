@@ -21,30 +21,30 @@ print("Waiting for a connection, Server Started")
 
 
 
-@staticmethod
+
 def read_pos(str):
     str = str.split(",")
-    return int(str[0]),int(str[1])
+    return int(float(str[0])),int(float(str[1]))
     
-@staticmethod
+
 def make_pos(tup):
-    return str(tup[0]) + "," + str(tup[1])
+    return str(int(tup[0])) + "," + str(int(tup[1]))
 
 
 
-pos = [(0,0),(100,100)]
+pos = [(600,0),(100,100)]
 
 def threaded_client(conn, player):
-    conn.send(str.encode(make_pos(pos[player])))
-    
+    test = conn.send(str.encode(make_pos(pos[player])))
     reply = ""
+    print(test)
     while True:
         try:
             data = read_pos(conn.recv(2048).decode())
-
+            reply = data
             pos[player] = data
 
-            print('test')
+            
             if not data:
                 print("Disconnected")
                 break
@@ -59,8 +59,8 @@ def threaded_client(conn, player):
             
             conn.sendall(str.encode(make_pos(reply)))
 
-        except: 
-            break
+        except Exception as e:
+            print("Error:", e)
     
     print("Lost connection")
     conn.close()
@@ -70,6 +70,7 @@ currentPlayer = 0
 while True:
     conn, addr = s.accept()
     print("Connected to:", addr)
+    
 
     start_new_thread(threaded_client, (conn, currentPlayer))
     currentPlayer += 1

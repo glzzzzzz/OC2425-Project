@@ -43,12 +43,12 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_UP]:
             self.jump = True
         
-        self.rect_update()
+        #self.rect_update()
 
 
 
-    def rect_update(self):
-        self.rect = self.rect      
+   # def rect_update(self):
+    #    self.rect = self.rect      
 
     def move(self, dt):
         #dt sert a varier la vitesse en fonction du nb d'fps

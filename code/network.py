@@ -6,18 +6,19 @@ class Network:
         self.server = "192.168.1.123"
         self.port = 5555
         self.addr = (self.server, self.port)
-        self.id = self.connect()
         self.pos = self.connect()
+        
 
     def getPos(self): 
-        pass
+        return self.pos
     
     def connect(self):
         try:
-            self.client.connect(self.addr)
+            data = self.client.connect(self.addr)
             return self.client.recv(2048).decode()
-        except:
-            pass
+        except Exception as e:
+            print("connection failed", e)
+            
 
 
     def send(self, data):
@@ -28,6 +29,4 @@ class Network:
             print(e)
 
             
-n = Network()
-print(n.send("hello"))
-print(n.send("working"))
+
