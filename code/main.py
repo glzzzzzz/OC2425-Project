@@ -18,17 +18,20 @@ class Game:
 
     #@staticmethod
     #def read(str):
-     #   str = str.split(",")
-      #  return int(str[0]),int(str[1])
+        #str = str.split(",")
+        #return int(str[0]),int(str[1])
     
     #@staticmethod
     #def make_pos(tup):
-     #   return str(tup[0]) + "," + str(tup[1])
+        #return str(tup[0]) + "," + str(tup[1])
     
     def run(self):
 
         #n = Network()
-        #startPos = Game.read(n.getPos())
+        
+        #p2pos = n.send(make_pos(()))
+
+
 
         while True:
             dt = self.clock.tick(60) / 1000

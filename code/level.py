@@ -53,6 +53,8 @@ class Level:
 
         self.collision_sprites = pygame.sprite.Group()
 
+        self.players = []
+
 
         self.setup (tmx_map)
     
@@ -62,9 +64,11 @@ class Level:
 
         for obj in tmx_map.get_layer_by_name('Object'): 
             if obj.name =='monster':
-                Player((obj.x, obj.y-100), self.all_sprites, self.collision_sprites)
+                player1 = Player((obj.x, obj.y-100), self.all_sprites, self.collision_sprites)
+                self.players.append(player1)
             if obj.name == 'zombie':
-                Player((obj.x, obj.y-100), self.all_sprites, self.collision_sprites)
+                player2 = Player((obj.x, obj.y-100), self.all_sprites, self.collision_sprites)
+                self.players.append(player2)
 
             tmx_map.get_layer_by_name('Object')
     def run(self, dt):
