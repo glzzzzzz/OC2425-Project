@@ -40,7 +40,9 @@ class Game:
 
         while True:
 
+            
             p2pos = Game.read_pos(n.send(Game.make_pos((player1.rect.x, player1.rect.y))))
+            print(p2pos)
 
             player2.rect.x = int(p2pos[0])
             player2.rect.y = int(p2pos[1])
