@@ -1,10 +1,11 @@
 import socket
 from _thread import *
 import sys
+from config import ip_server, port
 
 
-server = "192.168.1.123"
-port = 5555
+server = ip_server
+port = port
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
