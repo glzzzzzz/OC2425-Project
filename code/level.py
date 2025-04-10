@@ -1,6 +1,6 @@
 from config import *
 from sprite import Sprite
-from player import Player
+from player import Player, Objet
 
 class Monster(Player):
     def __init__(self, pos, groups, collision_sprites):
@@ -64,15 +64,16 @@ class Level:
 
         for obj in tmx_map.get_layer_by_name('Object'): 
             if obj.name =='monster':
-                player1 = Player((obj.x, obj.y-100), self.all_sprites, self.collision_sprites)
+                player1 = Player((obj.x, obj.y-100), self.all_sprites, self.collision_sprites, "chat")
                 self.players.append(player1)
             if obj.name == 'zombie':
-                player2 = Player((obj.x, obj.y-100), self.all_sprites, self.collision_sprites)
+                player2 = Player((obj.x, obj.y-100), self.all_sprites, self.collision_sprites, "souris")
                 self.players.append(player2)
             tmx_map.get_layer_by_name('Object')
+            
+        self.bombe = Objet("chat", (255,255,0), self.all_sprites, self.players)
     def run(self, dt):
-
-
         self.display_surface.fill('black')
+        
         self.all_sprites.update(dt)
         self.all_sprites.draw(self.display_surface)

@@ -3,7 +3,7 @@ from level import Level
 from pytmx.util_pygame import load_pygame
 from os.path import join
 from network import Network
-from player import Player
+from player import Player, Objet
 
 class Game:
     def __init__(self):
@@ -34,7 +34,7 @@ class Game:
         player1 = self.level.players[0]
         player1.rect.x = int(startPos[0])
         player1.rect.y = int(startPos[1])
-
+        
 
         player2 = self.level.players[1]
 
@@ -47,11 +47,13 @@ class Game:
             player2.rect.x = int(p2pos[0])
             player2.rect.y = int(p2pos[1])
             
+
+            
+                    
             dt = self.clock.tick(60) / 1000
             for event in pygame.event.get():
                 if event.type == pygame.QUIT :
                     pygame.quit()
-
             self.level.run(dt)
             pygame.display.update()
             
