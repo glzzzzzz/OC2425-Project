@@ -35,10 +35,11 @@ def make_pos(tup):
 
 pos = [(600,0),(100,100)]
 
+roles = ["chat", "souris"]
 def threaded_client(conn, player):
-    test = conn.send(str.encode(make_pos(pos[player])))
+    
+    
     reply = ""
-    print(test)
     while True:
         try:
             data = read_pos(conn.recv(2048).decode())
@@ -55,8 +56,7 @@ def threaded_client(conn, player):
                 else: 
                     reply = pos[1]
 
-                print("Received:", data)
-                print("Sending:", reply)
+                
             
             conn.sendall(str.encode(make_pos(reply)))
 
@@ -66,13 +66,23 @@ def threaded_client(conn, player):
     print("Lost connection")
     conn.close()
 
+def threaded_client_role(conn, player):
+    role = roles[player] if player < len(roles) else "spectateur"
+    
+    try:
+        conn.sendall(role.encode())
+        conn.sendall(str.encode(make_pos(pos[player])))
+    except Exception as e :
+        print("error", e)
+        
+
 currentPlayer = 0
 
 while True:
     conn, addr = s.accept()
     print("Connected to:", addr)
     
-
+    start_new_thread(threaded_client_role,(conn, currentPlayer))
     start_new_thread(threaded_client, (conn, currentPlayer))
     currentPlayer += 1
     

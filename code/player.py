@@ -134,7 +134,6 @@ class Objet(pygame.sprite.Sprite):
     def __init__(self, owner, color, groups, players) :
         super().__init__(groups)
         self.owner = owner
-        
         self.color = color
         self.players = players
 

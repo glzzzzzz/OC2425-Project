@@ -30,20 +30,22 @@ class Game:
     def run(self):
 
         n = Network()
-        startPos = Game.read_pos(n.getPos())
         player1 = self.level.players[0]
+        player1.role = n.getRole()
+
+        startPos = n.getPos()
         player1.rect.x = int(startPos[0])
         player1.rect.y = int(startPos[1])
         
 
         player2 = self.level.players[1]
-
+        
         while True:
 
             
             p2pos = Game.read_pos(n.send(Game.make_pos((player1.rect.x, player1.rect.y))))
             print(p2pos)
-
+            print(player1.role)
             player2.rect.x = int(p2pos[0])
             player2.rect.y = int(p2pos[1])
             
