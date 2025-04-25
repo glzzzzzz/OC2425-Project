@@ -4,6 +4,7 @@ from pytmx.util_pygame import load_pygame
 from os.path import join
 from network import Network
 from player import Player, Objet
+import pygame
 
 class Game:
     def __init__(self):
