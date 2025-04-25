@@ -4,6 +4,8 @@ from pytmx.util_pygame import load_pygame
 from os.path import join
 from network import Network
 from player import Player
+import pygame
+import sys
 
 class Game:
     def __init__(self):
@@ -14,7 +16,7 @@ class Game:
 
         self.clock = pygame.time.Clock()
 
-        self.tmx_maps = {0: load_pygame(r'../data/background/test_map.tmx')}
+        self.tmx_maps = {0: load_pygame(r'OC2425-Project/data/background/test_map.tmx')}
         
         self.level = Level(self.tmx_maps[0])
 

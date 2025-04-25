@@ -1,6 +1,7 @@
 from config import *
 from sprite import Sprite
 from player import Player
+import pygame
 
 class Monster(Player):
     def __init__(self, pos, groups, collision_sprites):

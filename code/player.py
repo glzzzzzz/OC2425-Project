@@ -1,5 +1,8 @@
 from config import *
 from timer import Timer
+import pygame
+from pygame.math import Vector2 as vector
+
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, groups,collision_sprites):
         super().__init__(groups)

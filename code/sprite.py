@@ -1,5 +1,5 @@
-from config import *
-
+import pygame
+from config import TILE_SIZE
 
 class Sprite(pygame.sprite.Sprite):
     def __init__(self, pos, surf, groups):
