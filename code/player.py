@@ -1,14 +1,16 @@
 from config import *
 from timer import Timer
+
+
 import pygame
 from pygame.math import Vector2 as vector
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, groups,collision_sprites):
+    def __init__(self, pos, groups,collision_sprites, role):
         super().__init__(groups)
         self.image = pygame.Surface((32,32))
         self.image.fill('red')
-
+        self.role = role
         #position en temps réel
         self.rect = self.image.get_frect(topleft = pos)
         #ancienne position
@@ -129,3 +131,34 @@ class Player(pygame.sprite.Sprite):
         self.move(dt)
         self.check_contact()
         
+
+
+class Objet(pygame.sprite.Sprite):
+    def __init__(self, owner, color, groups, players) :
+        super().__init__(groups)
+        self.owner = owner
+        self.color = color
+        self.players = players
+
+        self.image = pygame.Surface((20,20), pygame.SRCALPHA) 
+        pygame.draw.circle(self.image, self.color, (10, 10), 10)
+        self.rect = self.image.get_rect(topleft=(0, 0))
+
+    
+        
+    def update(self, dt):
+        for player in self.players:
+            if player.role == self.owner:
+                self.rect.center = player.rect.center
+                break
+
+            if player.role != self.owner and self.rect.colliderect(player.rect):
+                self.owner = player.role
+                break
+
+        
+
+    
+
+
+    
