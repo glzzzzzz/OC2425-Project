@@ -23,4 +23,4 @@ class Timer:
 		if current_time - self.start_time >= self.duration:
 			if self.func and self.start_time != 0:
 				self.func()
-			self.deactivate()
+			self.deactivate() 
