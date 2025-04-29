@@ -54,18 +54,27 @@ class Game:
             # Réseau
             msg = f"{player1.rect.x},{player1.rect.y}|{self.level.bombe.owner}"
             reply = n.sendRecieve(msg)
-            if reply:
-                ready, pos_part, owner_part = reply.split("|")
-                ready = bool(ready)
-                x2, y2 = map(int, pos_part.split(","))
-                player2.rect.topleft = (x2, y2)
-                if owner_part != self.level.bombe.owner:
-                    self.level.bombe.owner = owner_part
-                    for p in self.level.players:
-                        p.has_bomb = (p.role == owner_part)
+            ready, pos_part, owner_part = reply.split("|")
+            if ready == 'True' :
+                ready = True
+            else :
+                ready = False
+            x2, y2 = map(int, pos_part.split(","))
+            player2.rect.topleft = (x2, y2)
+            if owner_part != self.level.bombe.owner:
+                self.level.bombe.owner = owner_part
+                for p in self.level.players:
+                    p.has_bomb = (p.role == owner_part)
 
-            # Gérer le timer d'explosion
+            # Update & draw
+            self.display_surface.fill((0, 0, 0))
 
+
+            if ready:
+                self.level.run(dt)
+                self.bomb_explosion_timer.activate()
+                
+                # Gérer le timer d'explosion
                 self.bomb_explosion_timer.update()
                 if not self.bomb_explosion_timer.active:
                     # Bombe a explosé
@@ -75,14 +84,6 @@ class Game:
                     else:
                         self.winner_message = "Personne n'avait la bombe !"
 
-            # Update & draw
-            self.display_surface.fill((0, 0, 0))
-
-
-            if ready:
-                self.level.run(dt)
-                self.bomb_explosion_timer.activate()
-                #timer
                 ms_left = self.bomb_explosion_timer.get_time_left()
                 seconds = ms_left / 1000
                 timer_text = f"Temps avant explosion : {seconds:.1f}s"
