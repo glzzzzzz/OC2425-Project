@@ -3,11 +3,19 @@ import socket, threading
 from config import ip_server, port
 import time 
 
-pos   = [(600.0, 0.0), (100.0, 100.0)]
-roles = ["chat", "souris"]
-bomb_owner = 0
-last_switch = time.time()
-ready = False
+class World() :
+    def __init__(self):
+        self.pos   = [(600.0, 0.0), (100.0, 100.0)]
+        self.roles = ["chat", "souris"]
+        self.bomb_owner = 0
+        self.last_switch = time.time()
+        self.ready = False
+
+    def check_collision(self) :
+        if abs(self.pos[0][0]-self.pos[1][0])+abs(self.pos[0][1]-self.pos[1][1]) < 48 and time.time() - self.last_switch > 3.0:
+            return True
+        
+WORLD = World()
 
 def read_msg(s):
     pos_str, owner = s.split("|")
@@ -18,9 +26,8 @@ def make_msg(t, owner):
     return f"{ready}|{t[0]},{t[1]}|{owner}"
 
 def handle_client(conn, player_id):
-    global bomb_owner, pos, last_switch, ready
-    conn.sendall(roles[player_id].encode())
-    conn.sendall(make_msg(pos[player_id], bomb_owner).encode())
+    conn.sendall(WORLD.roles[player_id].encode())
+    conn.sendall(make_msg(WORLD.pos[player_id], bomb_owner).encode())
 
     other = 1 - player_id
     try:
@@ -29,19 +36,16 @@ def handle_client(conn, player_id):
             if not data: break
 
             ready, x_f, y_f, owner = read_msg(data)
-            pos[player_id] = (x_f, y_f)
+            WORLD.pos[player_id] = (x_f, y_f)
             # Mise à jour du bomb_owner global
-            if check_collision() :
+            if WORLD.check_collision() :
                 bomb_owner = 1 - bomb_owner
                 last_switch = time.time()
             # On renvoie la position de l’autre + owner
-            conn.sendall(make_msg(pos[other], roles[bomb_owner]).encode())
+            conn.sendall(make_msg(WORLD.pos[other], WORLD.roles[bomb_owner]).encode())
     finally:
         conn.close()
 
-def check_collision() :
-    if abs(pos[0][0]-pos[1][0])+abs(pos[0][1]-pos[1][1]) < 48 and time.time() - last_switch > 3.0:
-        return True
 
 def main():
     global ready
