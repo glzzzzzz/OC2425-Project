@@ -5,6 +5,7 @@ from network import Network
 from timer import Timer
 from random import randint
 import pygame
+import pytmx
 
 class Game:
     def __init__(self):
@@ -78,6 +79,7 @@ class Game:
 
             # Update & draw
             self.display_surface.fill((0, 0, 0))
+
 
             if not self.game_frozen:
                 self.level.run(dt)

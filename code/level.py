@@ -2,6 +2,7 @@ from config import *
 from sprite import Sprite
 from player import Player, Objet
 import pygame
+import pytmx 
 
 class Level:
     def __init__(self, tmx_map):
@@ -9,6 +10,9 @@ class Level:
         self.all_sprites = pygame.sprite.Group()
         self.collision_sprites = pygame.sprite.Group()
         self.players = []
+
+        self.background = pygame.image.load(r'OC2425-Project/data/fond_ciel.jpg').convert()
+        self.background = pygame.transform.scale(self.background, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
         self.setup(tmx_map)
 
@@ -22,7 +26,10 @@ class Level:
 
     def setup(self, tmx_map):
         for x, y, surf in tmx_map.get_layer_by_name('terrain').tiles():
-            Sprite((x * TILE_SIZE, y * TILE_SIZE - 100), surf, (self.all_sprites, self.collision_sprites))
+            Sprite((x * TILE_SIZE, y * TILE_SIZE - 100), surf, (self.all_sprites, self.collision_sprites), 0)
+        for x, y, surf in tmx_map.get_layer_by_name('feuilles').tiles():
+            Sprite((x * TILE_SIZE, y * TILE_SIZE - 100), surf, (self.all_sprites, self.collision_sprites), 1)    
+
         for obj in tmx_map.get_layer_by_name('Object'):
             if obj.name == 'monster':
                 p = Player((obj.x, obj.y - 100), self.all_sprites, self.collision_sprites, "chat", self.players, None)
@@ -34,6 +41,7 @@ class Level:
                 self.collision_sprites.add(p)
 
     def run(self, dt):
-        self.display_surface.fill('black')
+        self.display_surface.blit(self.background, (0, 0))
+
         self.all_sprites.update(dt)
         self.all_sprites.draw(self.display_surface)

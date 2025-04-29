@@ -1,7 +1,7 @@
 # serveur.py
 import socket, threading
 from config import ip_server, port
-import time
+import time 
 
 pos   = [(600.0, 0.0), (100.0, 100.0)]
 roles = ["chat", "souris"]

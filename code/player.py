@@ -6,11 +6,27 @@ from pygame.math import Vector2 as vector
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, groups, collision_sprites, role, players, bombe):
         super().__init__(groups)
-        self.image = pygame.Surface((32, 32))
-        self.image.fill('red')
         self.role = role
         self.bombe = bombe
         self.has_bomb = False
+
+        self.frames = []
+        frame_count = 3  
+        for i in range(frame_count):
+            if self.role == "chat":
+                path = f'OC2425-Project/data/angel/big_zombie_idle_anim_f{i}.png'
+            else:
+                path = f'OC2425-Project/data/monster/big_demon_idle_anim_f{i}.png'
+            image = pygame.image.load(path).convert_alpha()
+            self.frames.append(image)
+
+        self.frame_index = 0
+        self.animation_speed = 8  # Images par seconde
+        self.base_image = self.frames[0]
+        self.image = self.base_image 
+
+        self.base_image = self.image
+        self.facing_right = True  # Direction initiale
 
         self.players = players
         self.colliding_with = None
@@ -29,6 +45,12 @@ class Player(pygame.sprite.Sprite):
             'wall jump': Timer(400),
             'bomb cooldown': Timer(3000)  
         }
+
+    def animate(self, dt):
+        self.frame_index += self.animation_speed * dt
+        if self.frame_index >= len(self.frames):
+            self.frame_index = 0
+        self.base_image = self.frames[int(self.frame_index)]
 
     def input(self):
         keys = pygame.key.get_pressed()
@@ -120,6 +142,14 @@ class Player(pygame.sprite.Sprite):
         self.input()
         self.move(dt)
         self.check_contact()
+        self.animate(dt)
+        # Flip horizontal selon la direction
+        if self.direction.x > 0:
+            self.facing_right = True
+        elif self.direction.x < 0:
+            self.facing_right = False
+
+        self.image = pygame.transform.flip(self.base_image, not self.facing_right, False)
 
 class Objet(pygame.sprite.Sprite):
     def __init__(self, owner, color, groups, players):
@@ -127,12 +157,32 @@ class Objet(pygame.sprite.Sprite):
         self.owner = owner
         self.color = color
         self.players = players
-        self.image = pygame.Surface((20, 20), pygame.SRCALPHA)
-        pygame.draw.circle(self.image, self.color, (10, 10), 10)
+
+        self.frames = []
+        frame_count = 3
+        for i in range(frame_count):
+            path = f'OC2425-Project/data/bombe/bombe{i}.png'
+            image = pygame.image.load(path).convert_alpha()
+            self.frames.append(image)
+
+        self.frame_index = 0
+        self.animation_speed = 8  # images par seconde
+
+        self.base_image = self.frames[0]
+        self.image = self.base_image
         self.rect = self.image.get_rect()
+
+    def animate(self, dt):
+        self.frame_index += self.animation_speed * dt
+        if self.frame_index >= len(self.frames):
+            self.frame_index = 0
+        self.base_image = self.frames[int(self.frame_index)]
+        self.image = self.base_image
 
     def update(self, dt):
         for p in self.players:
             if p.role == self.owner and p.has_bomb:
-                self.rect.center = p.rect.center
+                offset = pygame.math.Vector2(10, 0) if p.facing_right else pygame.math.Vector2(-10, 0)
+                self.rect.center = p.rect.center + offset
                 break
+        self.animate(dt)
