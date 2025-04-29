@@ -7,19 +7,20 @@ pos   = [(600.0, 0.0), (100.0, 100.0)]
 roles = ["chat", "souris"]
 bomb_owner = 0
 last_switch = time.time()
+ready = False
 
 def read_msg(s):
-    ready, pos_str, owner = s.split("|")
+    pos_str, owner = s.split("|")
     x_str, y_str = pos_str.split(",")
     return ready, float(x_str), float(y_str), owner
 
-def make_msg(ready,t, owner):
+def make_msg(t, owner):
     return f"{ready}|{t[0]},{t[1]}|{owner}"
 
-def handle_client(ready, conn, player_id):
-    global bomb_owner, pos, last_switch
+def handle_client(conn, player_id):
+    global bomb_owner, pos, last_switch, ready
     conn.sendall(roles[player_id].encode())
-    conn.sendall(make_msg(ready,pos[player_id], bomb_owner).encode())
+    conn.sendall(make_msg(pos[player_id], bomb_owner).encode())
 
     other = 1 - player_id
     try:
@@ -50,15 +51,14 @@ def main():
     sock.bind((ip_server, port))
     sock.listen()
     player_id = 0
-    ready = True
+    ready = False
         
     conn, _ = sock.accept()
     threading.Thread(target=handle_client, args=(conn, player_id), daemon=True).start()
-    player_id = 1 - player_id
+    player_id = 1
 
     conn, _ = sock.accept()
     threading.Thread(target=handle_client, args=(conn, player_id), daemon=True).start()
-    player_id = 1 - player_id
     ready = True
 
     while True :

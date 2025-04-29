@@ -20,8 +20,6 @@ class Game:
 
         # Explosion-related
         self.bomb_explosion_timer = Timer(BOMB_TIMER)
-        self.bomb_explosion_timer.activate()
-        self.game_frozen = False
         self.winner_message = ""
 
         # Font for winner message
@@ -53,8 +51,21 @@ class Game:
                     pygame.quit()
                     return
 
+            # Réseau
+            msg = f"{player1.rect.x},{player1.rect.y}|{self.level.bombe.owner}"
+            reply = n.sendRecieve(msg)
+            if reply:
+                ready, pos_part, owner_part = reply.split("|")
+                ready = bool(ready)
+                x2, y2 = map(int, pos_part.split(","))
+                player2.rect.topleft = (x2, y2)
+                if owner_part != self.level.bombe.owner:
+                    self.level.bombe.owner = owner_part
+                    for p in self.level.players:
+                        p.has_bomb = (p.role == owner_part)
+
             # Gérer le timer d'explosion
-            if not self.game_frozen:
+
                 self.bomb_explosion_timer.update()
                 if not self.bomb_explosion_timer.active:
                     # Bombe a explosé
@@ -63,30 +74,14 @@ class Game:
                         self.winner_message = f"{'Joueur 1' if bomb_holder.role == 'souris' else 'Joueur 2'} a gagné !"
                     else:
                         self.winner_message = "Personne n'avait la bombe !"
-                    self.game_frozen = True
-
-            # Réseau
-            if not self.game_frozen:
-                msg = f"{player1.rect.x},{player1.rect.y}|{self.level.bombe.owner}"
-                reply = n.sendRecieve(msg)
-                if reply:
-                    ready, pos_part, owner_part = reply.split("|")
-                    if not bool(ready) : 
-                        break
-                    x2, y2 = map(int, pos_part.split(","))
-                    player2.rect.topleft = (x2, y2)
-                    if owner_part != self.level.bombe.owner:
-                        self.level.bombe.owner = owner_part
-                        for p in self.level.players:
-                            p.has_bomb = (p.role == owner_part)
 
             # Update & draw
             self.display_surface.fill((0, 0, 0))
 
 
-            if not self.game_frozen:
+            if ready:
                 self.level.run(dt)
-
+                self.bomb_explosion_timer.activate()
                 #timer
                 ms_left = self.bomb_explosion_timer.get_time_left()
                 seconds = ms_left / 1000
