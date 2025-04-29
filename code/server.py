@@ -27,7 +27,7 @@ def make_msg(t, owner):
 
 def handle_client(conn, player_id):
     conn.sendall(WORLD.roles[player_id].encode())
-    conn.sendall(make_msg(WORLD.pos[player_id], bomb_owner).encode())
+    conn.sendall(make_msg(WORLD.pos[player_id], WORLD.bomb_owner).encode())
 
     other = 1 - player_id
     try:
@@ -35,14 +35,14 @@ def handle_client(conn, player_id):
             data = conn.recv(2048).decode()
             if not data: break
 
-            ready, x_f, y_f, owner = read_msg(data)
+            WORLD.ready, x_f, y_f, owner = read_msg(data)
             WORLD.pos[player_id] = (x_f, y_f)
             # Mise à jour du bomb_owner global
             if WORLD.check_collision() :
-                bomb_owner = 1 - bomb_owner
-                last_switch = time.time()
+                WORLD.bomb_owner = 1 - WORLD.bomb_owner
+                WORLD.last_switch = time.time()
             # On renvoie la position de l’autre + owner
-            conn.sendall(make_msg(WORLD.pos[other], WORLD.roles[bomb_owner]).encode())
+            conn.sendall(make_msg(WORLD.pos[other], WORLD.roles[WORLD.bomb_owner]).encode())
     finally:
         conn.close()
 
@@ -56,17 +56,25 @@ def main():
     sock.listen()
     player_id = 0
     ready = False
-        
-    conn, _ = sock.accept()
-    threading.Thread(target=handle_client, args=(conn, player_id), daemon=True).start()
+
+    # Attente de la connexion du premier joueur
+    conn1, _ = sock.accept()
+    thread1 = threading.Thread(target=handle_client, args=(conn1, player_id))
+    thread1.start()
     player_id = 1
 
-    conn, _ = sock.accept()
-    threading.Thread(target=handle_client, args=(conn, player_id), daemon=True).start()
+    # Attente de la connexion du second joueur
+    conn2, _ = sock.accept()
+    thread2 = threading.Thread(target=handle_client, args=(conn2, player_id))
+    thread2.start()
     ready = True
 
-    while True :
-        pass
+    # Attente que les deux threads clients se terminent
+    thread1.join()
+    thread2.join()
+
+    sock.close()
+
 
 if __name__ == "__main__":
     main()
