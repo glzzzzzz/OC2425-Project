@@ -9,9 +9,11 @@ class Network:
 
         # Handshake
         self.role = self.client.recv(2048).decode()
-        pos_str = self.client.recv(2048).decode()   # ex. "600.0,0.0"
-        x_f, y_f = map(float, pos_str.split(","))
+        pos_str = self.client.recv(2048).decode()  # "x,y|owner"
+        pos_part, owner_part = pos_str.split("|")
+        x_f, y_f = map(float, pos_part.split(","))
         self.pos = (int(x_f), int(y_f))
+        self.bomb_owner = owner_part
 
     def getRole(self):
         return self.role
@@ -19,15 +21,24 @@ class Network:
     def getPos(self):
         return self.pos
 
+    def getBombOwner(self):
+        return self.bomb_owner
+
     def send(self, data: str):
+        """
+        data = "x,y|owner"
+        Returns "x2,y2|owner"
+        """
         try:
             self.client.sendall(data.encode())
             reply = self.client.recv(2048).decode()
             if not reply:
                 return None
-            x_f, y_f = map(float, reply.split(","))
+            pos_part, owner_part = reply.split("|")
+            x_f, y_f = map(float, pos_part.split(","))
             self.pos = (int(x_f), int(y_f))
-            return f"{self.pos[0]},{self.pos[1]}"
+            self.bomb_owner = owner_part
+            return f"{self.pos[0]},{self.pos[1]}|{self.bomb_owner}"
         except socket.error as e:
             print("Socket error:", e)
             return None

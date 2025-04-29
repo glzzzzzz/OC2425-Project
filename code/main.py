@@ -2,7 +2,6 @@ from config import *
 from level import Level
 from pytmx.util_pygame import load_pygame
 from network import Network
-from player import Player, Objet
 import pygame
 
 class Game:
@@ -16,51 +15,50 @@ class Game:
         self.tmx_maps = {0: load_pygame(r'OC2425-Project/data/background/test_map.tmx')}
         self.level = Level(self.tmx_maps[0])
 
-    @staticmethod
-    def read_pos(string):
-        """Convert 'x,y' into (int(x), int(y))"""
-        x, y = string.split(",")
-        return int(x), int(y)
-
-    @staticmethod
-    def make_pos(tup):
-        """Convert (x, y) into 'x,y'"""
-        return f"{int(tup[0])},{int(tup[1])}"
-
     def run(self):
         n = Network()
 
+        # Setup local player
         player1 = self.level.players[0]
         player1.role = n.getRole()
+        start_x, start_y = n.getPos()
+        player1.rect.topleft = (start_x, start_y)
 
-        startPos = n.getPos()
-        player1.rect.x = int(startPos[0])
-        player1.rect.y = int(startPos[1])
-
+        # Assign remote role
         player2 = self.level.players[1]
         player2.role = 'souris' if player1.role == 'chat' else 'chat'
 
+        # Initialize bomb owner from server
+        self.level.bombe.owner = n.getBombOwner()
+        # Give bomb to correct player
+        for p in self.level.players:
+            p.has_bomb = (p.role == self.level.bombe.owner)
+
         while True:
             dt = self.clock.tick(60) / 1000
-
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     return
 
-            # --- Communication Réseau ---
-            my_pos = Game.make_pos((player1.rect.x, player1.rect.y))
-            reply_pos = n.send(my_pos)
+            # Send position and bomb owner: "x,y|owner"
+            msg = f"{player1.rect.x},{player1.rect.y}|{self.level.bombe.owner}"
+            reply = n.send(msg)
 
-            if reply_pos:
-                p2pos = Game.read_pos(reply_pos)
-                player2.rect.x = int(p2pos[0])
-                player2.rect.y = int(p2pos[1])
+            if reply:
+                pos_part, owner_part = reply.split("|")
+                x2, y2 = map(int, pos_part.split(","))
+                player2.rect.topleft = (x2, y2)
+                # Update bomb owner locally
+                if owner_part != self.level.bombe.owner:
+                    self.level.bombe.owner = owner_part
+                    # update has_bomb flags
+                    for p in self.level.players:
+                        p.has_bomb = (p.role == owner_part)
 
-            # --- Update et Draw ---
-            self.level.run(dt)  # <<< Garde run(dt) ici, pas update !
+            # Update & draw
+            self.level.run(dt)
             pygame.display.update()
 
 if __name__ == '__main__':
-    game = Game()
-    game.run()
+    Game().run()
