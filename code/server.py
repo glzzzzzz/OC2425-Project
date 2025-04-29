@@ -1,10 +1,12 @@
 # serveur.py
 import socket, threading
 from config import ip_server, port
+import time
 
 pos   = [(600.0, 0.0), (100.0, 100.0)]
 roles = ["chat", "souris"]
-bomb_owner = "chat"
+bomb_owner = 0
+last_switch = time.time()
 
 def read_msg(s):
     pos_str, owner = s.split("|")
@@ -15,7 +17,7 @@ def make_msg(t, owner):
     return f"{t[0]},{t[1]}|{owner}"
 
 def handle_client(conn, player_id):
-    global bomb_owner
+    global bomb_owner, pos, last_switch
     conn.sendall(roles[player_id].encode())
     conn.sendall(make_msg(pos[player_id], bomb_owner).encode())
 
@@ -28,11 +30,17 @@ def handle_client(conn, player_id):
             x_f, y_f, owner = read_msg(data)
             pos[player_id] = (x_f, y_f)
             # Mise à jour du bomb_owner global
-            bomb_owner = owner
+            if check_collision() :
+                bomb_owner = 1 - bomb_owner
+                last_switch = time.time()
             # On renvoie la position de l’autre + owner
-            conn.sendall(make_msg(pos[other], bomb_owner).encode())
+            conn.sendall(make_msg(pos[other], roles[bomb_owner]).encode())
     finally:
         conn.close()
+
+def check_collision() :
+    if abs(pos[0][0]-pos[1][0])+abs(pos[0][1]-pos[1][1]) < 48 and time.time() - last_switch > 3.0:
+        return True
 
 def main():
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

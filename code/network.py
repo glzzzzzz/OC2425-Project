@@ -24,7 +24,7 @@ class Network:
     def getBombOwner(self):
         return self.bomb_owner
 
-    def send(self, data: str):
+    def sendRecieve(self, data: str):
         """
         data = "x,y|owner"
         Returns "x2,y2|owner"

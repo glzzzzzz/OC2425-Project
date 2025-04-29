@@ -27,7 +27,7 @@ class Player(pygame.sprite.Sprite):
         self.on_surface = {'floor': False, 'left': False, 'right': False}
         self.timers = {
             'wall jump': Timer(400),
-            'bomb cooldown': Timer(3000)  # 🔥 cooldown de 3 secondes
+            'bomb cooldown': Timer(3000)  
         }
 
     def input(self):
@@ -81,18 +81,6 @@ class Player(pygame.sprite.Sprite):
             if spr is self:
                 continue
             if isinstance(spr, Player) and spr.rect.colliderect(self.rect):
-                if (self.can_swap and spr.can_swap 
-                    and not self.timers['bomb cooldown'].active 
-                    and not spr.timers['bomb cooldown'].active 
-                    and self.has_bomb != spr.has_bomb):
-                    self.has_bomb, spr.has_bomb = spr.has_bomb, self.has_bomb
-                    new_owner = self.role if self.has_bomb else spr.role
-                    self.bombe.owner = new_owner
-                    print(f"Bombe passée à {new_owner}")
-                    self.can_swap = spr.can_swap = False
-                    self.timers['bomb cooldown'].activate()
-                    spr.timers['bomb cooldown'].activate()
-
                 if axis == 'horizontal':
                     if self.old_rect.right <= spr.old_rect.left:
                         self.rect.right = spr.rect.left

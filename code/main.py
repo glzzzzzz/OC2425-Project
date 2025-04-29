@@ -66,7 +66,7 @@ class Game:
             # Réseau
             if not self.game_frozen:
                 msg = f"{player1.rect.x},{player1.rect.y}|{self.level.bombe.owner}"
-                reply = n.send(msg)
+                reply = n.sendRecieve(msg)
                 if reply:
                     pos_part, owner_part = reply.split("|")
                     x2, y2 = map(int, pos_part.split(","))

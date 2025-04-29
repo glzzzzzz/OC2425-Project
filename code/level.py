@@ -10,7 +10,6 @@ class Level:
         self.collision_sprites = pygame.sprite.Group()
         self.players = []
 
-        # Setup level and players
         self.setup(tmx_map)
 
         # Créer la bombe APRES avoir instancié les joueurs
