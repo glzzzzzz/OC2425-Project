@@ -19,13 +19,14 @@ class Game:
         self.level = Level(self.tmx_maps[0])
 
         # Explosion-related
-        self.bomb_explosion_timer = Timer(randint(BOMB_MIN_TIMER, BOMB_MAX_TIMER))
+        self.bomb_explosion_timer = Timer(BOMB_TIMER)
         self.bomb_explosion_timer.activate()
         self.game_frozen = False
         self.winner_message = ""
 
         # Font for winner message
         self.font = pygame.font.SysFont(None, 72)
+        self.timer_font = pygame.font.SysFont(None, 36)
 
     def run(self):
         n = Network()
@@ -69,7 +70,9 @@ class Game:
                 msg = f"{player1.rect.x},{player1.rect.y}|{self.level.bombe.owner}"
                 reply = n.sendRecieve(msg)
                 if reply:
-                    pos_part, owner_part = reply.split("|")
+                    ready, pos_part, owner_part = reply.split("|")
+                    if not bool(ready) : 
+                        break
                     x2, y2 = map(int, pos_part.split(","))
                     player2.rect.topleft = (x2, y2)
                     if owner_part != self.level.bombe.owner:
@@ -83,9 +86,16 @@ class Game:
 
             if not self.game_frozen:
                 self.level.run(dt)
+
+                #timer
+                ms_left = self.bomb_explosion_timer.get_time_left()
+                seconds = ms_left / 1000
+                timer_text = f"Temps avant explosion : {seconds:.1f}s"
+                text_surf = self.timer_font.render(timer_text, True, (255, 255, 255))
+                self.display_surface.blit(text_surf, (10, 10))
+
             else:
                 self.level.all_sprites.draw(self.display_surface)
-
                 text_surface = self.font.render(self.winner_message, True, (255, 255, 0))
                 text_rect = text_surface.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
                 self.display_surface.blit(text_surface, text_rect)
