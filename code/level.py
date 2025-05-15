@@ -11,7 +11,7 @@ class Level:
         self.collision_sprites = pygame.sprite.Group()
         self.players = []
 
-        self.background = pygame.image.load(r'OC2425-Project/data/fond_ciel.jpg').convert()
+        self.background = pygame.image.load('../data/fond_ciel.jpg').convert()
         self.background = pygame.transform.scale(self.background, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
         self.setup(tmx_map)

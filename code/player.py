@@ -14,9 +14,9 @@ class Player(pygame.sprite.Sprite):
         frame_count = 3  
         for i in range(frame_count):
             if self.role == "chat":
-                path = f'OC2425-Project/data/angel/big_zombie_idle_anim_f{i}.png'
+                path = f'../data/angel/big_zombie_idle_anim_f{i}.png'
             else:
-                path = f'OC2425-Project/data/monster/big_demon_idle_anim_f{i}.png'
+                path = f'../data/monster/big_demon_idle_anim_f{i}.png'
             image = pygame.image.load(path).convert_alpha()
             self.frames.append(image)
 
@@ -161,7 +161,7 @@ class Objet(pygame.sprite.Sprite):
         self.frames = []
         frame_count = 3
         for i in range(frame_count):
-            path = f'OC2425-Project/data/bombe/bombe{i}.png'
+            path = f'../data/bombe/bombe{i}.png'
             image = pygame.image.load(path).convert_alpha()
             self.frames.append(image)
 

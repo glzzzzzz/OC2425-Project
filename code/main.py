@@ -6,7 +6,7 @@ from timer import Timer
 from random import randint
 import pygame
 import pytmx
-
+from pathlib import Path
 class Game:
     def __init__(self):
         pygame.init()
@@ -14,13 +14,14 @@ class Game:
         self.display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         pygame.display.set_caption('potato')
         self.clock = pygame.time.Clock()
-
+        
+        
         #Music
-        pygame.mixer.music.load(r'OC2425-Project/data/Sons/music.mp3') 
+        pygame.mixer.music.load('../data/Sons/music.mp3') 
         pygame.mixer.music.play(-1)
 
         # Load maps
-        self.tmx_maps = {0: load_pygame(r'OC2425-Project/data/background/test_map.tmx')}
+        self.tmx_maps = {0: load_pygame('../data/background/test_map.tmx')}
         self.level = Level(self.tmx_maps[0])
 
         # Explosion-related
